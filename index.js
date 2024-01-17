@@ -1,6 +1,9 @@
 // Require Express
 const express = require('express');
 
+//Global variable to store total budget
+const totalBudget = 1800;
+
 // Create an Express application
 const app = express();
 
@@ -16,3 +19,5 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
+
+
