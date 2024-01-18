@@ -1,34 +1,27 @@
-// Require Express
 const express = require('express');
 const bodyParser = require('body-parser');
 
 // Global variable to store total budget and envelopes
-const totalBudget = 1800;
+let totalBudget = 1800;
 let envelopes = [];
 let nextId = 1; // To keep track of the next ID to assign
 
-// Create an Express application
 const app = express();
-
-// Use body-parser middleware to parse JSON bodies
 app.use(bodyParser.json());
 
-// Define a port
 const port = 3000;
 
 // POST endpoint to create an envelope
 app.post('/envelopes/envelope', (req, res) => {
     const { title, budget } = req.body;
 
-    // Validation
-    if (!title || !budget) {
-        return res.status(400).send('Both title and budget are required');
+    if (!title || budget === undefined) {
+        return res.status(400).send('Title and budget are required');
     }
     if (budget < 0) {
         return res.status(400).send('Budget cannot be negative');
     }
 
-    // Create envelope
     const newEnvelope = { id: nextId++, title, budget };
     envelopes.push(newEnvelope);
     res.status(201).send(`Envelope '${title}' created with budget $${budget}`);
@@ -36,19 +29,78 @@ app.post('/envelopes/envelope', (req, res) => {
 
 // GET endpoint to retrieve all envelopes
 app.get('/envelopes', (req, res) => {
-    if (envelopes.length === 0) {
-        return res.status(404).send('No envelopes found');
-    }
     res.status(200).json(envelopes);
 });
 
-// GET endpoint to retrieve a specific envelope
+// GET endpoint to retrieve a specific envelope by ID
 app.get('/envelopes/envelope/:id', (req, res) => {
-    const envelope = envelopes.find(env => env.id === parseInt(req.params.id));
+    const id = parseInt(req.params.id);
+    const envelope = envelopes.find(env => env.id === id);
+
     if (!envelope) {
         return res.status(404).send('Envelope not found');
     }
+
     res.status(200).json(envelope);
+});
+
+// PUT endpoint to update a specific envelope by ID
+app.put('/envelopes/envelope/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+    const { budget, title } = req.body;
+
+    const envelopeIndex = envelopes.findIndex(env => env.id === id);
+    if (envelopeIndex === -1) {
+        return res.status(404).send('Envelope not found');
+    }
+
+    if (budget !== undefined && budget < 0) {
+        return res.status(400).send('Budget cannot be negative');
+    }
+
+    if (title !== undefined) envelopes[envelopeIndex].title = title;
+    if (budget !== undefined) envelopes[envelopeIndex].budget = budget;
+
+    res.status(200).json(envelopes[envelopeIndex]);
+});
+
+// DELETE endpoint to delete a specific envelope by ID
+app.delete('/envelopes/envelope/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+
+    const envelopeExists = envelopes.some(env => env.id === id);
+    if (!envelopeExists) {
+        return res.status(404).send('Envelope not found');
+    }
+
+    envelopes = envelopes.filter(env => env.id !== id);
+
+    res.status(200).send(`Envelope with ID ${id} deleted successfully.`);
+});
+
+// POST endpoint to transfer value between envelopes
+app.post('/envelopes/transfer/:from/:to', (req, res) => {
+    const fromId = parseInt(req.params.from);
+    const toId = parseInt(req.params.to);
+    const { amount } = req.body;
+
+    const fromEnvelope = envelopes.find(env => env.id === fromId);
+    const toEnvelope = envelopes.find(env => env.id === toId);
+
+    if (!fromEnvelope || !toEnvelope) {
+        return res.status(404).send('One or both envelopes not found');
+    }
+    if (amount <= 0) {
+        return res.status(400).send('Transfer amount must be positive');
+    }
+    if (fromEnvelope.budget < amount) {
+        return res.status(400).send('Insufficient funds in the source envelope');
+    }
+
+    fromEnvelope.budget -= amount;
+    toEnvelope.budget += amount;
+
+    res.status(200).json({ from: fromEnvelope, to: toEnvelope });
 });
 
 // Listen on the port
