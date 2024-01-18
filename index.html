@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Budget Envelopes</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Budget Envelopes</h1>
+
+    <!-- Table for Displaying Envelopes -->
+    <table id="envelope-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Budget</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Envelope rows will go here -->
+        </tbody>
+    </table>
+
+    <!-- Form for Creating an Envelope -->
+    <h2>Create Envelope</h2>
+    <form id="create-form">
+        <input type="text" id="create-title" placeholder="Envelope Title" required>
+        <input type="number" id="create-budget" placeholder="Budget" required>
+        <button type="submit">Create Envelope</button>
+    </form>
+
+    <!-- Form for Updating an Envelope Balance -->
+    <h2>Update Envelope Balance</h2>
+    <form id="update-form">
+        <input type="number" id="envelope-id" placeholder="Envelope ID" required>
+        <input type="number" id="new-balance" placeholder="New Balance" required>
+        <button type="submit">Update Balance</button>
+    </form>
+
+    <!-- Form for Deleting an Envelope -->
+    <h2>Delete Envelope</h2>
+    <form id="delete-form">
+        <input type="number" id="delete-id" placeholder="Envelope ID" required>
+        <button type="submit">Delete Envelope</button>
+    </form>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -11,6 +11,21 @@ app.use(bodyParser.json());
 
 const port = 3000;
 
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*'); // allow requests from any origin
+    res.header(
+        'Access-Control-Allow-Methods', 
+        'GET, POST, PUT, DELETE' // Specify allowed methods
+    );
+    res.header(
+        'Access-Control-Allow-Headers',
+        'Origin, X-Requested-With, Content-Type, Accept'
+    );
+    next();
+});
+
+
+
 // POST endpoint to create an envelope
 app.post('/envelopes/envelope', (req, res) => {
     const { title, budget } = req.body;
