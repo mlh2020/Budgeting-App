@@ -25,7 +25,7 @@ git clone https://github.com/your-repository/budget-envelopes.git
 2. Navigate to the project directory:
 
 ```console
-cd budget-envelopes
+cd /path/to/directory
 ```
 
 3. Install dependencies:
