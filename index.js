@@ -12,6 +12,11 @@ app.use(bodyParser.json());
 
 const port = 3000;
 
+// Helper function to calculate total envelope budget
+function getTotalEnvelopeBudget() {
+    return envelopes.reduce((total, envelope) => total + envelope.budget, 0);
+}
+
 // Get all envelopes
 app.get('/envelopes', (req, res) => {
     res.status(200).send(envelopes);
@@ -25,6 +30,9 @@ app.post('/envelopes/envelope', (req, res) => {
     }
     if (budget < 0) {
         return res.status(400).send('Budget cannot be negative');
+    }
+    if (budget + getTotalEnvelopeBudget() > totalBudget) {
+        return res.status(400).send('Creating this envelope exceeds total funds');
     }
     const newEnvelope = { id: nextId++, title, budget };
     envelopes.push(newEnvelope);
@@ -41,6 +49,10 @@ app.put('/envelopes/envelope/:id', (req, res) => {
     const envelopeIndex = envelopes.findIndex(e => e.id === id);
     if (envelopeIndex === -1) {
         return res.status(404).send('Envelope not found');
+    }
+    const currentEnvelopeBudget = envelopes[envelopeIndex].budget;
+    if (budget - currentEnvelopeBudget + getTotalEnvelopeBudget() > totalBudget) {
+        return res.status(400).send('Updating this envelope exceeds total funds');
     }
     envelopes[envelopeIndex].budget = budget;
     res.status(200).send(envelopes[envelopeIndex]);

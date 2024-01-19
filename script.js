@@ -42,21 +42,25 @@ function createEnvelope(event) {
     event.preventDefault();
     const title = document.getElementById('create-title').value;
     const budget = parseInt(document.getElementById('create-budget').value, 10);
-    const envelope = { title, budget };
     fetch('http://localhost:3000/envelopes/envelope', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify(envelope),
+        body: JSON.stringify({ title, budget }),
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to create envelope: ' + response.statusText);
+        }
+        return response.json();
+    })
     .then(data => {
         envelopes.push(data);
         displayEnvelopes();
         displayStatusMessage('Envelope created');
     })
-    .catch(error => displayStatusMessage('Error creating envelope: ' + error));
+    .catch(error => displayStatusMessage(error.message));
 }
 
 function updateEnvelope(event) {
@@ -70,24 +74,34 @@ function updateEnvelope(event) {
         },
         body: JSON.stringify({ budget }),
     })
-    .then(() => {
-        envelopes = envelopes.map(envelope => envelope.id === id ? { ...envelope, budget } : envelope);
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to update envelope: ' + response.statusText);
+        }
+        return response.json();
+    })
+    .then(updatedEnvelope => {
+        const index = envelopes.findIndex(envelope => envelope.id === id);
+        envelopes[index] = updatedEnvelope;
         displayEnvelopes();
         displayStatusMessage('Envelope updated');
     })
-    .catch(error => displayStatusMessage('Error updating envelope: ' + error));
+    .catch(error => displayStatusMessage(error.message));
 }
 
 function deleteEnvelope(event) {
     event.preventDefault();
     const id = parseInt(document.getElementById('delete-id').value, 10);
     fetch(`http://localhost:3000/envelopes/envelope/${id}`, { method: 'DELETE' })
-    .then(() => {
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to delete envelope: ' + response.statusText);
+        }
         envelopes = envelopes.filter(envelope => envelope.id !== id);
         displayEnvelopes();
         displayStatusMessage('Envelope deleted');
     })
-    .catch(error => displayStatusMessage('Error deleting envelope: ' + error));
+    .catch(error => displayStatusMessage(error.message));
 }
 
 function transferFunds(event) {
@@ -102,12 +116,21 @@ function transferFunds(event) {
         },
         body: JSON.stringify({ fromId, toId, amount }),
     })
-    .then(() => {
-        // Update local envelopes array based on the transfer logic
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to transfer funds: ' + response.statusText);
+        }
+        return response.json();
+    })
+    .then(data => {
+        const fromIndex = envelopes.findIndex(envelope => envelope.id === fromId);
+        const toIndex = envelopes.findIndex(envelope => envelope.id === toId);
+        envelopes[fromIndex] = data.from;
+        envelopes[toIndex] = data.to;
         displayEnvelopes();
         displayStatusMessage('Funds transferred');
     })
-    .catch(error => displayStatusMessage('Error transferring funds: ' + error));
+    .catch(error => displayStatusMessage(error.message));
 }
 
 function displayStatusMessage(message) {
