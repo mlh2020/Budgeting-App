@@ -4,12 +4,52 @@
     <meta charset="UTF-8">
     <title>Budget Envelopes</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Add any required stylesheets or scripts -->
 </head>
 <body>
-    <h1>Budget Envelopes</h1>
+    <div id="status-message"></div>
 
-    <!-- Table for Displaying Envelopes -->
-    <table id="envelope-table">
+    <!-- Set Total Funds Form -->
+    <h2>Total Funds</h2>
+    <form id="set-funds-form">
+        <input type="number" id="total-funds-input" placeholder="Total Funds">
+        <button type="submit">Set Total Funds</button>
+    </form>
+
+    <!-- Create Envelope Form -->
+    <h2>Create Envelope</h2>
+    <form id="create-form">
+        <input type="text" id="create-title" placeholder="Envelope Title">
+        <input type="number" id="create-budget" placeholder="Budget">
+        <button type="submit">Create Envelope</button>
+    </form>
+
+    <!-- Update Envelope Form -->
+    <h2>Update Envelope</h2>
+    <form id="update-form">
+        <input type="number" id="update-id" placeholder="Envelope ID">
+        <input type="number" id="update-budget" placeholder="New Budget">
+        <button type="submit">Update Envelope</button>
+    </form>
+
+    <!-- Delete Envelope Form -->
+    <h2>Delete Envelope</h2>
+    <form id="delete-form">
+        <input type="number" id="delete-id" placeholder="Envelope ID">
+        <button type="submit">Delete Envelope</button>
+    </form>
+
+    <!-- Transfer Funds Form -->
+    <h2>Transfer Funds</h2>
+    <form id="transfer-form">
+        <input type="number" id="transfer-from-id" placeholder="From Envelope ID">
+        <input type="number" id="transfer-to-id" placeholder="To Envelope ID">
+        <input type="number" id="transfer-amount" placeholder="Amount">
+        <button type="submit">Transfer Funds</button>
+    </form>
+
+    <!-- Envelopes Table -->
+    <table>
         <thead>
             <tr>
                 <th>ID</th>
@@ -17,33 +57,10 @@
                 <th>Budget</th>
             </tr>
         </thead>
-        <tbody>
-            <!-- Envelope rows will go here -->
+        <tbody id="envelope-table-body">
+            <!-- Envelope data will be populated here -->
         </tbody>
     </table>
-
-    <!-- Form for Creating an Envelope -->
-    <h2>Create Envelope</h2>
-    <form id="create-form">
-        <input type="text" id="create-title" placeholder="Envelope Title" required>
-        <input type="number" id="create-budget" placeholder="Budget" required>
-        <button type="submit">Create Envelope</button>
-    </form>
-
-    <!-- Form for Updating an Envelope Balance -->
-    <h2>Update Envelope Balance</h2>
-    <form id="update-form">
-        <input type="number" id="envelope-id" placeholder="Envelope ID" required>
-        <input type="number" id="new-balance" placeholder="New Balance" required>
-        <button type="submit">Update Balance</button>
-    </form>
-
-    <!-- Form for Deleting an Envelope -->
-    <h2>Delete Envelope</h2>
-    <form id="delete-form">
-        <input type="number" id="delete-id" placeholder="Envelope ID" required>
-        <button type="submit">Delete Envelope</button>
-    </form>
 
     <script src="script.js"></script>
 </body>
